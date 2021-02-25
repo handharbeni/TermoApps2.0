@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,24 +22,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.security.NoSuchAlgorithmException;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,12 +51,6 @@ import dev.mhandharbeni.termoapps20.utils.Messages;
 import dev.mhandharbeni.termoapps20.utils.Utils;
 import dev.mhandharbeni.termoapps20.utils_network.AppConstant;
 import rx.Subscription;
-
-import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.ABSENIN;
-import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.ABSENOUT;
-import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.PEGAWAI;
-import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.SUHUIN;
-import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.SUHUOUT;
 
 @SuppressLint("NonConstantResourceId")
 public class BottomsheetResult extends BottomSheetDialogFragment implements

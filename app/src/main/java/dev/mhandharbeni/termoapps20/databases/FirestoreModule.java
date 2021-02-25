@@ -1,27 +1,13 @@
 package dev.mhandharbeni.termoapps20.databases;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
-import java.util.Set;
 
 import dev.mhandharbeni.termoapps20.utils.Utils;
 import dev.mhandharbeni.termoapps20.utils_network.AppConstant;
@@ -43,6 +29,10 @@ public class FirestoreModule {
                             .build();
             firebaseFirestore = FirebaseFirestore.getInstance();
             firebaseFirestore.setFirestoreSettings(firebaseFirestoreSettings);
+
+            HashMap<String, Object> lastUpdate = new HashMap<>();
+            lastUpdate.put("TIMESTAMP", String.valueOf(System.currentTimeMillis()));
+            firebaseFirestore.collection(AppConstant.PARENT).document(Utils.getDate()).set(lastUpdate);
         }
     }
 
@@ -54,12 +44,6 @@ public class FirestoreModule {
     }
 
     public void writeLogToStore(String parent, String mode, String id, HashMap<String, Object> data){
-        HashMap<String, Object> lastUpdate = new HashMap<>();
-        lastUpdate.put("ID", id);
-        lastUpdate.put("NAME", data.get(AppConstant.NAMA));
-        lastUpdate.put("TIMESTAMP", String.valueOf(System.currentTimeMillis()));
-
-        firebaseFirestore.collection(parent).document(Utils.getDate()).set(lastUpdate);
         firebaseFirestore.collection(parent)
                 .document(Utils.getDate())
                 .collection(mode)
