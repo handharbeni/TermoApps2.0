@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -218,16 +217,8 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                     processWhoIsItMM(anyClass);
                     break;
                 case ABSENIN:
-                    Toast.makeText(
-                            getActivity().getApplicationContext(),
-                            "ABSEN IN SUCCESS",
-                            Toast.LENGTH_SHORT).show();
                     break;
                 case ABSENOUT:
-                    Toast.makeText(
-                            getActivity().getApplicationContext(),
-                            "ABSEN OUT SUCCESS",
-                            Toast.LENGTH_SHORT).show();
                     break;
             }
         } catch (Exception e){}
