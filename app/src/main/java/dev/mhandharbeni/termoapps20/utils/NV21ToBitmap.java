@@ -13,10 +13,21 @@ public class NV21ToBitmap  {
     private ScriptIntrinsicYuvToRGB yuvToRgbIntrinsic;
     private Type.Builder yuvType, rgbaType;
     private Allocation in, out;
+
+    /**
+     * @param context
+     */
     public NV21ToBitmap(Context context) {
         rs = RenderScript.create(context);
         yuvToRgbIntrinsic = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs));
     }
+
+    /**
+     * @param nv21
+     * @param width
+     * @param height
+     * @return
+     */
     public Bitmap nv21ToBitmap(byte[] nv21, int width, int height){
         if (yuvType == null){
             yuvType = new Type.Builder(rs, Element.U8(rs)).setX(nv21.length);

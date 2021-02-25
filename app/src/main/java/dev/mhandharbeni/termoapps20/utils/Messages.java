@@ -9,6 +9,11 @@ import com.andrognito.flashbar.anim.FlashAnim;
 import dev.mhandharbeni.termoapps20.R;
 
 public class Messages {
+    /**
+     * @param activity
+     * @param title
+     * @param message
+     */
     public static void showAlertMessage(Activity activity, String title, String message){
         new Flashbar.Builder(activity)
                 .gravity(Flashbar.Gravity.TOP)
@@ -33,6 +38,11 @@ public class Messages {
                 .show();
     }
 
+    /**
+     * @param activity
+     * @param title
+     * @param message
+     */
     public static void showSuccessMessage(Activity activity, String title, String message){
         new Flashbar.Builder(activity)
                 .gravity(Flashbar.Gravity.TOP)
@@ -57,6 +67,11 @@ public class Messages {
                 .show();
     }
 
+    /**
+     * @param activity
+     * @param title
+     * @param message
+     */
     public static void showWarningMessage(Activity activity, String title, String message){
         new Flashbar.Builder(activity)
                 .gravity(Flashbar.Gravity.TOP)

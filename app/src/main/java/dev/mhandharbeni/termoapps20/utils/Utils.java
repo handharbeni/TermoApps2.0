@@ -22,11 +22,21 @@ import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.SUHUOUT;
 
 @SuppressLint("SimpleDateFormat")
 public class Utils {
+
+    /**
+     * @param text
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
     public static byte[] sha256(String text) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         return digest.digest(text.getBytes(StandardCharsets.UTF_8));
     }
 
+    /**
+     * @param hash
+     * @return
+     */
     public static String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {
@@ -38,12 +48,20 @@ public class Utils {
         }
         return hexString.toString();
     }
+
+    /**
+     * @return
+     */
     public static String getCurrentDate() {
         Calendar c = Calendar.getInstance();
         SimpleDateFormat df =
                 new SimpleDateFormat(AppConstant.DATEPATTERN);
         return df.format(c.getTime());
     }
+
+    /**
+     * @return
+     */
     public static String getDate(){
         Date date = new Date();
         SimpleDateFormat formatter =
@@ -56,10 +74,19 @@ public class Utils {
         return String.valueOf(date.getTime());
     }
 
+    /**
+     * @param millis
+     * @return
+     */
     public static String getDate(long millis){
         return getDate(millis, AppConstant.DATEPATTERN);
     }
 
+    /**
+     * @param millis
+     * @param pattern
+     * @return
+     */
     public static String getDate(long millis, String pattern){
         SimpleDateFormat formatter = new SimpleDateFormat(pattern);
         Calendar calendar = Calendar.getInstance();
@@ -67,7 +94,15 @@ public class Utils {
         return formatter.format(calendar.getTime());
     }
 
-
+    /**
+     * @param nik
+     * @param nama
+     * @param absenin
+     * @param absenout
+     * @param suhuin
+     * @param suhuout
+     * @return
+     */
     public static HashMap<String, Object> getData(
             String nik,
             String nama,
