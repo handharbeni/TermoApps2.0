@@ -95,7 +95,6 @@ public class DetailFragment extends Fragment implements FirestoreModule.Firestor
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     listAbsen.clear();
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Log.d("DetailFragment", "fetchData: "+document.get(AppConstant.NAMA).toString());
                         Absen absen = new Absen();
                         absen.setName(document.get(AppConstant.NAMA).toString());
                         absen.setNik(document.get(AppConstant.NIK).toString());
@@ -106,8 +105,6 @@ public class DetailFragment extends Fragment implements FirestoreModule.Firestor
 
                         listAbsen.add(absen);
                     }
-
-                    Log.d("DetailFragment", "fetchData: "+listAbsen.size());
 
                     init();
 
