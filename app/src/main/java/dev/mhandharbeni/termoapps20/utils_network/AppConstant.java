@@ -6,6 +6,8 @@ public class AppConstant {
     public static final String PARENT = "facethermal";
 
     public static final String DATEPATTERN = "dd/MM/yyyy";
+    public static final String FILENAME = "faces.jpg";
+    public static final String DIRNAME = "Photos";
 
 
     public static final String NIK = "NIK";

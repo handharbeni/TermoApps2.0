@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -207,6 +208,7 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                     
                     break;
                 case VERIFY:
+                    processVerify(anyClass);
                     break;
                 case ADDFRUSER:
                     processAddFrUser(anyClass);
@@ -221,11 +223,16 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                 case ABSENOUT:
                     break;
             }
-        } catch (Exception e){}
+        } catch (Exception ignored){}
     }
 
     void processVerify(Object anyClass){
-        VerifyResponse verifyResponse = (VerifyResponse) anyClass;
+        try {
+            VerifyResponse verifyResponse = (VerifyResponse) anyClass;
+            if (verifyResponse.getData().get(0).isIsSamePerson()){
+                llAbsen.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception ignored){}
     }
 
     void processAddFrUser(Object anyClass){
@@ -266,10 +273,10 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
             verify.setNik(nik.getText().toString());
             verify.setData(encoded);
             verify.setHash(Utils.bytesToHex(Utils.sha256(encoded)));
-            verify.setFile_name(System.currentTimeMillis()+".jpg");
+            verify.setFile_name(AppConstant.FILENAME);
 
             resultPresenter.verify(verify);
-        } catch (Exception e){}
+        } catch (Exception ignored){}
     }
 
     void processWhoIsItMM(Object anyClass){
@@ -282,12 +289,12 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                 } else {
                     name.setText(person);
                     nik.setText(whoIsItMMResponse.getData().get(0).getPipNik());
-                    verify.setVisibility(View.VISIBLE);
                     llAbsen.setVisibility(View.VISIBLE);
+                    verify.setVisibility(View.VISIBLE);
                     addAssets.setVisibility(View.VISIBLE);
                 }
             }
-        } catch (Exception e){}
+        } catch (Exception ignored){}
     }
 
     @OnClick(R.id.addUser)
@@ -300,7 +307,7 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
             addFrUser.setNik(nik.getText().toString());
 
             resultPresenter.addFrUser(addFrUser);
-        } catch (Exception e){}
+        } catch (Exception ignored){}
     }
 
     @OnClick(R.id.btnAbsenIn)
@@ -315,16 +322,8 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     @OnClick(R.id.ok)
     public void dismissBottomSheet(){
-//        dismissAllowingStateLoss();
-        Messages.showAlertMessage(getActivity(), "TEST", "TEST SNACKBAR");
-//        firestoreModule.getListDataByMode(AppConstant.PARENT, PEGAWAI).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-//            @Override
-//            public void onSuccess(@NonNull @NotNull QuerySnapshot queryDocumentSnapshots) {
-//                for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
-//
-//                }
-//            }
-//        });
+        dismissAllowingStateLoss();
+//        Messages.showAlertMessage(getActivity(), "TEST", "TEST SNACKBAR");
     }
 
     @Override

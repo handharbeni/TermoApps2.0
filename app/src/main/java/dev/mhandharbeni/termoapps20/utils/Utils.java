@@ -74,6 +74,33 @@ public class Utils {
         return String.valueOf(date.getTime());
     }
 
+    public static String getMonth(){
+        Date date = new Date();
+        SimpleDateFormat formatter =
+                new SimpleDateFormat(AppConstant.DATEPATTERN);
+        try {
+            date = formatter.parse(getCurrentDate());
+            date.setDate(1);
+            date.setHours(0);
+            date.setMinutes(0);
+            date.setSeconds(0);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return String.valueOf(date.getTime());
+    }
+
+    public static String getFirstDayInWeek(){
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.clear(Calendar.MINUTE);
+        cal.clear(Calendar.SECOND);
+        cal.clear(Calendar.MILLISECOND);
+
+        cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+        return String.valueOf(cal.getTimeInMillis());
+    }
+
     /**
      * @param millis
      * @return

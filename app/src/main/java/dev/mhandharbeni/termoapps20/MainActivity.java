@@ -38,6 +38,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dev.mhandharbeni.termoapps20.utils_network.AppConstant;
+import dev.mhandharbeni.termoapps20.views.FaceBoundOverlay;
 import io.fotoapparat.facedetector.Rectangle;
 import io.fotoapparat.facedetector.processor.FaceDetectorProcessor;
 import io.fotoapparat.facedetector.view.RectanglesView;
@@ -60,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
 
     @BindView(R.id.showLog)
     AppCompatImageButton showLog;
+
+    @BindView(R.id.boundOverlay)
+    FaceBoundOverlay boundOverlay;
 
     boolean isPlay = false;
     FaceDetector detector;
@@ -107,6 +112,8 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             detector.process(image)
                     .addOnSuccessListener(
                             faces -> {
+//                                boundOverlay.updateFaces(faces);
+//                                boundOverlay.draw
                                 new Handler().postDelayed(() -> {
                                     if (isPlay){
                                         if (faces.size() > 0 && !isTakingPicture){
@@ -143,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             @Override
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
                 result.toFile(
-                        new File(getExternalFilesDir("Photos"), "faces.jpg")
+                        new File(getExternalFilesDir(AppConstant.DIRNAME), AppConstant.FILENAME)
                         , file -> {
                             BottomsheetResult bottomsheetResult = new BottomsheetResult(MainActivity.this, file, MainActivity.this);
                             bottomsheetResult.show(getSupportFragmentManager(), bottomsheetResult.getTag());

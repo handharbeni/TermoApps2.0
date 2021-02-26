@@ -41,6 +41,10 @@
                     app:layout_drawOnPreview="true"
                     app:layout_drawOnPictureSnapshot="true"/>
         </com.otaliastudios.cameraview.CameraView>
+        <dev.mhandharbeni.termoapps20.views.FaceBoundOverlay
+            android:id="@+id/boundOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 <!--        <husaynhakeem.io.facedetector.FaceBoundsOverlay-->
 <!--            android:id="@+id/faceBoundsOverlay"-->
 <!--            android:layout_width="match_parent"-->

@@ -31,7 +31,7 @@ public class FirestoreModule {
             firebaseFirestore.setFirestoreSettings(firebaseFirestoreSettings);
 
             HashMap<String, Object> lastUpdate = new HashMap<>();
-            lastUpdate.put("TIMESTAMP", String.valueOf(System.currentTimeMillis()));
+            lastUpdate.put("TIMESTAMP", Utils.getDate());
             firebaseFirestore.collection(AppConstant.PARENT).document(Utils.getDate()).set(lastUpdate);
         }
     }
@@ -63,15 +63,18 @@ public class FirestoreModule {
     }
 
     public Task<QuerySnapshot> getListDataByMode(String parent, String mode){
-        return firebaseFirestore.collection(parent).document(Utils.getDate()).collection(mode).get();
+        return firebaseFirestore.collection(parent)
+                .document(Utils.getDate()).collection(mode).get();
     }
 
     public Task<QuerySnapshot> getListDataByMode(String parent, String date, String mode){
-        return firebaseFirestore.collection(parent).document(date).collection(mode).get();
+        return firebaseFirestore.collection(parent)
+                .document(date).collection(mode).get();
     }
 
     public Task<QuerySnapshot> getListParent(String parent){
-        return firebaseFirestore.collection(parent).get();
+        return firebaseFirestore.collection(parent)
+                .whereGreaterThanOrEqualTo("TIMESTAMP", Utils.getFirstDayInWeek()).get();
     }
 
 

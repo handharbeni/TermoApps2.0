@@ -215,7 +215,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
     }
 
     public void absenIn(String sNama, String sNik){
-        getMvpView().fetchLoad("INSERT LOG");
+        getMvpView().fetchLoad("SAVE ABSEN IN");
         firestoreModule.getDataFromStore(
                 AppConstant.PARENT,
                 AppConstant.MODE.PEGAWAI.getValue(),
@@ -223,7 +223,11 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
                 .addOnSuccessListener(documentSnapshot -> {
                     String sAbsenIn, sAbsenOut, sSuhuIn, sSuhuOut;
                     if (documentSnapshot.exists()){
-                        sAbsenIn = String.valueOf(System.currentTimeMillis());
+                        if (documentSnapshot.get(ABSENIN).toString().equalsIgnoreCase("0")){
+                            sAbsenIn = String.valueOf(System.currentTimeMillis());
+                        } else {
+                            sAbsenIn = documentSnapshot.get(ABSENIN).toString();
+                        }
                         sAbsenOut = documentSnapshot.get(ABSENOUT).toString();
                         sSuhuIn = documentSnapshot.get(SUHUIN).toString();
                         sSuhuOut = documentSnapshot.get(SUHUOUT).toString();
@@ -251,7 +255,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
                 });
     }
     public void absenOut(String sNama, String sNik){
-        getMvpView().fetchLoad("INSERT LOG");
+        getMvpView().fetchLoad("SAVE ABSEN OUT");
         firestoreModule.getDataFromStore(
                 AppConstant.PARENT,
                 AppConstant.MODE.PEGAWAI.getValue(),
@@ -259,8 +263,12 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
                 .addOnSuccessListener(documentSnapshot -> {
                     String sAbsenIn, sAbsenOut, sSuhuIn, sSuhuOut;
                     if (documentSnapshot.exists()){
+                        if (documentSnapshot.get(ABSENOUT).toString().equalsIgnoreCase("0")){
+                            sAbsenOut = String.valueOf(System.currentTimeMillis());
+                        } else {
+                            sAbsenOut = documentSnapshot.get(ABSENOUT).toString();
+                        }
                         sAbsenIn = documentSnapshot.get(ABSENIN).toString();
-                        sAbsenOut = String.valueOf(System.currentTimeMillis());
                         sSuhuIn = documentSnapshot.get(SUHUIN).toString();
                         sSuhuOut = documentSnapshot.get(SUHUOUT).toString();
                     } else {
