@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Message;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +24,9 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -33,13 +38,16 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
 import dev.mhandharbeni.termoapps20.databases.FirestoreModule;
 import dev.mhandharbeni.termoapps20.interfaces.ResultCallback;
 import dev.mhandharbeni.termoapps20.models.AddFrUser;
+import dev.mhandharbeni.termoapps20.models.Guest;
 import dev.mhandharbeni.termoapps20.models.UploadReg;
 import dev.mhandharbeni.termoapps20.models.Verify;
 import dev.mhandharbeni.termoapps20.models.WhoIsItMM;
@@ -52,7 +60,7 @@ import dev.mhandharbeni.termoapps20.utils.Utils;
 import dev.mhandharbeni.termoapps20.utils_network.AppConstant;
 import rx.Subscription;
 
-@SuppressLint("NonConstantResourceId")
+@SuppressLint({"NonConstantResourceId", "SetTextI18n"})
 public class BottomsheetResult extends BottomSheetDialogFragment implements
         ResultCallback.ResultResponseCallback,
         FirestoreModule.FirestoreModuleCallback {
@@ -98,6 +106,9 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     AppConstant.STATE_FETCH currentState;
     FirestoreModule firestoreModule;
+
+    private boolean isEmployee = false;
+    private CountDownTimer countDownTimer;
 
     public static BottomsheetResult newInstance(
             Activity activity,
@@ -183,7 +194,10 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     @Override
     public void onDismiss(@NonNull @NotNull DialogInterface dialog) {
         super.onDismiss(dialog);
-        bottomsheetResultCallback.dismissDialog();
+//        try {
+////            progressDialog.dismiss();
+////            countDownTimer.cancel();
+//        } catch (Exception ignored ){}
     }
 
     @Override
@@ -243,6 +257,13 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
         } catch (Exception ignored){}
     }
 
+    @OnFocusChange(R.id.name)
+    public void onNameFocusChanged(boolean focused){
+        try {
+            if (focused) countDownTimer.cancel();
+        } catch (Exception ignored){}
+    }
+
     @OnClick(R.id.addAssets)
     public void processUploadReg(){
         // done
@@ -285,8 +306,27 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
             if (whoIsItMMResponse.getData().size() > 0){
                 String person = whoIsItMMResponse.getData().get(0).getPersonInPicture();
                 if (person.equalsIgnoreCase("unknown")){
+                    ok.setText("OK & SAVE GUEST LOG");
                     addUser.setVisibility(View.VISIBLE);
+                    countDownTimer = new CountDownTimer(AppConstant.MILLISINFUTURE
+                            , AppConstant.MILLISINTERVAL){
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            long lResult = millisUntilFinished / 1000;
+                            if (lResult == 0) ok.setText("OK & SAVE GUEST LOG");
+                            else ok.setText(String.format("OK & SAVE GUEST LOG (%s)", String.valueOf(lResult)));
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            ok.setText("SAVING");
+                            proceedGuest();
+                        }
+                    };
+                    countDownTimer.start();
                 } else {
+                    isEmployee = true;
+                    ok.setText("OK");
                     name.setText(person);
                     nik.setText(whoIsItMMResponse.getData().get(0).getPipNik());
                     llAbsen.setVisibility(View.VISIBLE);
@@ -294,6 +334,43 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                     addAssets.setVisibility(View.VISIBLE);
                 }
             }
+        } catch (Exception ignored){}
+    }
+
+    void proceedGuest(){
+        try {
+            countDownTimer.cancel();
+            progressDialog = ProgressDialog.show(activity, "RESULT", "SAVING GUEST");
+
+            String sMillis = String.valueOf(System.currentTimeMillis());
+            String sName = "GUEST_"+(name.getText().toString().isEmpty() ?
+                    sMillis : name.getText().toString());
+
+            firestoreModule.writeToLogStore(
+                    AppConstant.PARENT,
+                    AppConstant.MODE.UMUM.getValue(),
+                    String.valueOf(System.currentTimeMillis()),
+                    Utils.getDataGuest(
+                            sName,
+                            "-",
+                            encodeImage(file),
+                            sMillis,
+                            "0"
+                    )
+            ).addOnSuccessListener(unused -> {
+                if (progressDialog != null){
+                    progressDialog.dismiss();
+                    progressDialog = null;
+                }
+                bottomsheetResultCallback.dismissDialog();
+                dismissAllowingStateLoss();
+            })
+            .addOnFailureListener(e -> {
+                e.printStackTrace();
+            })
+            .addOnCompleteListener(task -> {
+                Messages.showSuccessMessage(activity, "RESULT", "SAVING COMPLETE");
+            });
         } catch (Exception ignored){}
     }
 
@@ -322,8 +399,12 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     @OnClick(R.id.ok)
     public void dismissBottomSheet(){
-        dismissAllowingStateLoss();
-//        Messages.showAlertMessage(getActivity(), "TEST", "TEST SNACKBAR");
+        if (isEmployee){
+            bottomsheetResultCallback.dismissDialog();
+            dismissAllowingStateLoss();
+        } else {
+            proceedGuest();
+        }
     }
 
     @Override

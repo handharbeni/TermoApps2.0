@@ -54,6 +54,14 @@ public class FirestoreModule {
                 .addOnCompleteListener(task -> firestoreModuleCallback.onCompleteVoid(task));
     }
 
+    public Task<Void> writeToLogStore(String parent, String mode, String id, HashMap<String, Object> data){
+        return firebaseFirestore.collection(parent)
+                .document(Utils.getDate())
+                .collection(mode)
+                .document(id)
+                .set(data);
+    }
+
     public Task<DocumentSnapshot> getDataFromStore(String parent, String mode, String id){
         return firebaseFirestore.collection(parent)
                 .document(Utils.getDate())

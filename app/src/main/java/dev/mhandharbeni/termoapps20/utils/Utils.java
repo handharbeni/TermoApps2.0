@@ -19,6 +19,11 @@ import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.NAMA;
 import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.NIK;
 import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.SUHUIN;
 import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.SUHUOUT;
+import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.UMUM_DATE;
+import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.UMUM_IMAGE;
+import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.UMUM_NAMA;
+import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.UMUM_SUHU;
+import static dev.mhandharbeni.termoapps20.utils_network.AppConstant.UMUM_TUJUAN;
 
 @SuppressLint("SimpleDateFormat")
 public class Utils {
@@ -26,11 +31,14 @@ public class Utils {
     /**
      * @param text
      * @return
-     * @throws NoSuchAlgorithmException
      */
-    public static byte[] sha256(String text) throws NoSuchAlgorithmException {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        return digest.digest(text.getBytes(StandardCharsets.UTF_8));
+    public static byte[] sha256(String text) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            return digest.digest(text.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e){
+            return new byte[0];
+        }
     }
 
     /**
@@ -38,67 +46,87 @@ public class Utils {
      * @return
      */
     public static String bytesToHex(byte[] hash) {
-        StringBuilder hexString = new StringBuilder(2 * hash.length);
-        for (int i = 0; i < hash.length; i++) {
-            String hex = Integer.toHexString(0xff & hash[i]);
-            if(hex.length() == 1) {
-                hexString.append('0');
+        try {
+            StringBuilder hexString = new StringBuilder(2 * hash.length);
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
             }
-            hexString.append(hex);
+            return hexString.toString();
+        } catch (Exception e){
+            return "-";
         }
-        return hexString.toString();
     }
 
     /**
      * @return
      */
     public static String getCurrentDate() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat df =
-                new SimpleDateFormat(AppConstant.DATEPATTERN);
-        return df.format(c.getTime());
+        try {
+            Calendar c = Calendar.getInstance();
+            SimpleDateFormat df =
+                    new SimpleDateFormat(AppConstant.DATEPATTERN);
+            return df.format(c.getTime());
+        } catch (Exception e){
+            return "-";
+        }
     }
 
     /**
      * @return
      */
     public static String getDate(){
-        Date date = new Date();
-        SimpleDateFormat formatter =
-                new SimpleDateFormat(AppConstant.DATEPATTERN);
         try {
-            date = formatter.parse(getCurrentDate());
-        } catch (ParseException e) {
-            e.printStackTrace();
+            Date date = new Date();
+            SimpleDateFormat formatter =
+                    new SimpleDateFormat(AppConstant.DATEPATTERN);
+            try {
+                date = formatter.parse(getCurrentDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return String.valueOf(date.getTime());
+        } catch (Exception e){
+            return "-";
         }
-        return String.valueOf(date.getTime());
     }
 
     public static String getMonth(){
-        Date date = new Date();
-        SimpleDateFormat formatter =
-                new SimpleDateFormat(AppConstant.DATEPATTERN);
         try {
-            date = formatter.parse(getCurrentDate());
-            date.setDate(1);
-            date.setHours(0);
-            date.setMinutes(0);
-            date.setSeconds(0);
-        } catch (ParseException e) {
-            e.printStackTrace();
+            Date date = new Date();
+            SimpleDateFormat formatter =
+                    new SimpleDateFormat(AppConstant.DATEPATTERN);
+            try {
+                date = formatter.parse(getCurrentDate());
+                date.setDate(1);
+                date.setHours(0);
+                date.setMinutes(0);
+                date.setSeconds(0);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return String.valueOf(date.getTime());
+        } catch (Exception e){
+            return "-";
         }
-        return String.valueOf(date.getTime());
     }
 
     public static String getFirstDayInWeek(){
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.clear(Calendar.MINUTE);
-        cal.clear(Calendar.SECOND);
-        cal.clear(Calendar.MILLISECOND);
+        try {
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.clear(Calendar.MINUTE);
+            cal.clear(Calendar.SECOND);
+            cal.clear(Calendar.MILLISECOND);
 
-        cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
-        return String.valueOf(cal.getTimeInMillis());
+            cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+            return String.valueOf(cal.getTimeInMillis());
+        } catch (Exception e){
+            return "-";
+        }
     }
 
     /**
@@ -115,10 +143,14 @@ public class Utils {
      * @return
      */
     public static String getDate(long millis, String pattern){
-        SimpleDateFormat formatter = new SimpleDateFormat(pattern);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(millis);
-        return formatter.format(calendar.getTime());
+        try {
+            SimpleDateFormat formatter = new SimpleDateFormat(pattern);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(millis);
+            return formatter.format(calendar.getTime());
+        } catch (Exception e){
+            return "-";
+        }
     }
 
     /**
@@ -144,6 +176,22 @@ public class Utils {
         data.put(ABSENOUT, absenout);
         data.put(SUHUIN, suhuin);
         data.put(SUHUOUT, suhuout);
+        return data;
+    }
+
+    public static HashMap<String, Object> getDataGuest(
+            String nama,
+            String tujuan,
+            String image,
+            String date,
+            String suhu
+    ){
+        HashMap<String, Object> data = new HashMap<>();
+        data.put(UMUM_NAMA, nama);
+        data.put(UMUM_TUJUAN, tujuan);
+        data.put(UMUM_IMAGE, image);
+        data.put(UMUM_DATE, date);
+        data.put(UMUM_SUHU, suhu);
         return data;
     }
 }

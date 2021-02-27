@@ -26,6 +26,9 @@ public class AppConstant {
     private static final String PEGAWAI = "PEGAWAI";
     private static final String UMUM = "UMUM";
 
+    public static final long MILLISINTERVAL = 1000;
+    public static final long MILLISINFUTURE = 10 * MILLISINTERVAL;
+
     public enum STATE_FETCH{
         WHOISIT,
         REALTIMETRAINING,

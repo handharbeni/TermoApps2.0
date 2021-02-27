@@ -154,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                         new File(getExternalFilesDir(AppConstant.DIRNAME), AppConstant.FILENAME)
                         , file -> {
                             BottomsheetResult bottomsheetResult = new BottomsheetResult(MainActivity.this, file, MainActivity.this);
+                            bottomsheetResult.setCancelable(false);
                             bottomsheetResult.show(getSupportFragmentManager(), bottomsheetResult.getTag());
                         });
             }
