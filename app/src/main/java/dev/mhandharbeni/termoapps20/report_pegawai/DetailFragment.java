@@ -1,10 +1,9 @@
-package dev.mhandharbeni.termoapps20;
+package dev.mhandharbeni.termoapps20.report_pegawai;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.mhandharbeni.termoapps20.R;
 import dev.mhandharbeni.termoapps20.adapters.PegawaiAdapter;
 import dev.mhandharbeni.termoapps20.databases.FirestoreModule;
 import dev.mhandharbeni.termoapps20.models.Absen;

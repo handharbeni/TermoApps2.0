@@ -17,8 +17,14 @@ public class AppConstant {
     public static final String SUHUIN = "SUHU_IN";
     public static final String SUHUOUT = "SUHU_OUT";
 
-    public static final String PEGAWAI = "PEGAWAI";
-    public static final String UMUM = "UMUM";
+    public static final String UMUM_NAMA = "UMUM_NAMA";
+    public static final String UMUM_TUJUAN = "UMUM_TUJUAN";
+    public static final String UMUM_IMAGE = "UMUM_IMAGE";
+    public static final String UMUM_DATE = "UMUM_DATE";
+    public static final String UMUM_SUHU = "UMUM_SUHU";
+
+    private static final String PEGAWAI = "PEGAWAI";
+    private static final String UMUM = "UMUM";
 
     public enum STATE_FETCH{
         WHOISIT,
@@ -29,7 +35,8 @@ public class AppConstant {
         DELFRUSER,
         WHOISITMM,
         ABSENIN,
-        ABSENOUT
+        ABSENOUT,
+        CHECKIN
     }
 
     public enum MODE{

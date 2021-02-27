@@ -1,4 +1,4 @@
-package dev.mhandharbeni.termoapps20;
+package dev.mhandharbeni.termoapps20.report_pegawai;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.mhandharbeni.termoapps20.R;
 
 @SuppressLint("NonConstantResourceId")
 public class ReportActivity extends AppCompatActivity {

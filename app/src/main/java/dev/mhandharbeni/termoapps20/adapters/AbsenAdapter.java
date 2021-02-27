@@ -1,7 +1,6 @@
 package dev.mhandharbeni.termoapps20.adapters;
 
 import android.app.Activity;
-import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -9,10 +8,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import dev.mhandharbeni.termoapps20.DetailFragment;
+import dev.mhandharbeni.termoapps20.report_pegawai.DetailFragment;
 
 public class AbsenAdapter extends FragmentStateAdapter {
     Activity activity;

@@ -1,4 +1,4 @@
-package dev.mhandharbeni.termoapps20;
+package dev.mhandharbeni.termoapps20.report_pegawai;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -26,6 +26,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dev.mhandharbeni.termoapps20.R;
 import dev.mhandharbeni.termoapps20.adapters.AbsenAdapter;
 import dev.mhandharbeni.termoapps20.databases.FirestoreModule;
 import dev.mhandharbeni.termoapps20.utils.Messages;
@@ -63,6 +64,9 @@ public class AbsenFragment extends Fragment implements FirestoreModule.Firestore
     public View onCreateView(@NonNull @NotNull LayoutInflater inflater, @Nullable @org.jetbrains.annotations.Nullable ViewGroup container, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.absen_fragment, container, false);
         ButterKnife.bind(this, view);
+
+        mProgressDialog = ProgressDialog.show(activity, "REPORT ABSEN", "LOAD REPORT THIS WEEK");
+
         firestoreModule = FirestoreModule.getInstance(this);
         fetchData();
         return view;
