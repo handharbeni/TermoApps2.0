@@ -339,7 +339,10 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     void proceedGuest(){
         try {
-            countDownTimer.cancel();
+            if (countDownTimer != null){
+                countDownTimer.cancel();
+                countDownTimer = null;
+            }
             progressDialog = ProgressDialog.show(activity, "RESULT", "SAVING GUEST");
 
             String sMillis = String.valueOf(System.currentTimeMillis());
