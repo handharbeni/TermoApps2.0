@@ -365,12 +365,9 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                 bottomsheetResultCallback.dismissDialog();
                 dismissAllowingStateLoss();
             })
-            .addOnFailureListener(e -> {
-                e.printStackTrace();
-            })
-            .addOnCompleteListener(task -> {
-                Messages.showSuccessMessage(activity, "RESULT", "SAVING COMPLETE");
-            });
+            .addOnFailureListener(e -> Messages.showAlertMessage(activity, "RESULT", "SOMETHING WENT WRONG\n" +
+                    "ON SAVING LOG"))
+            .addOnCompleteListener(task -> Messages.showSuccessMessage(activity, "RESULT", "SAVING COMPLETE"));
         } catch (Exception ignored){}
     }
 
