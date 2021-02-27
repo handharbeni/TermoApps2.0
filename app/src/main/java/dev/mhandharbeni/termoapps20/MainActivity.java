@@ -67,6 +67,12 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @BindView(R.id.boundOverlay)
     FaceBoundOverlay boundOverlay;
 
+    @BindView(R.id.takePicture)
+    AppCompatImageButton takePicture;
+
+    @BindView(R.id.showLogGuest)
+    AppCompatImageButton showLogGuest;
+
     boolean isPlay = false;
     FaceDetector detector;
 
@@ -130,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                             Throwable::printStackTrace);
         });
     }
+
     void startCamera(){
         SizeSelector width = SizeSelectors.minWidth(10);
         SizeSelector height = SizeSelectors.minHeight(10);
@@ -162,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         cameraView.open();
     }
 
+    @OnClick(R.id.takePicture)
     public void cameraTakePicture(){
         if (!isTakingPicture) cameraView.takePicture();
     }
