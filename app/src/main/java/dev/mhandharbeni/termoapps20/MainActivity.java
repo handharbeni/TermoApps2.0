@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.google.mlkit.vision.common.InputImage;
+import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
@@ -50,6 +52,8 @@ import butterknife.OnClick;
 import dev.mhandharbeni.termoapps20.report_pegawai.ReportActivity;
 import dev.mhandharbeni.termoapps20.utils_network.AppConstant;
 import dev.mhandharbeni.termoapps20.views.FaceBoundOverlay;
+import dev.mhandharbeni.termoapps20.views.GraphicOverlay;
+import dev.mhandharbeni.termoapps20.views.RectOverlay;
 import io.fotoapparat.facedetector.Rectangle;
 import io.fotoapparat.facedetector.processor.FaceDetectorProcessor;
 import io.fotoapparat.facedetector.view.RectanglesView;
@@ -74,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     AppCompatImageButton showLog;
 
     @BindView(R.id.boundOverlay)
-    FaceBoundOverlay boundOverlay;
+    GraphicOverlay boundOverlay;
 
     @BindView(R.id.takePicture)
     AppCompatImageButton takePicture;
@@ -93,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        boundOverlay.setCameraInfo(0, 0, cameraView.getFacing());
         checkPermission();
     }
 
@@ -138,13 +143,24 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
 //                                    rectF.set(faces.get(0).getBoundingBox());
 //                                    cameraView.startAutoFocus(rectF);
 //                                }
+                                boundOverlay.clear();
+//                                for (Face face : faces) {
+//                                    Rect boundingBox = face.getBoundingBox();
+//                                    RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
+//                                    boundOverlay.add(rectOverlay);
+//                                }
+                                if (faces.size() > 0){
+                                    Rect boundingBox = faces.get(0).getBoundingBox();
+                                    RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
+                                    boundOverlay.add(rectOverlay);
+                                }
                                 new Handler().postDelayed(() -> {
                                     if (isPlay){
                                         if (faces.size() > 0 && !isTakingPicture){
                                             cameraView.clearFrameProcessors();
                                             cameraTakePicture();
                                             isTakingPicture = true;
-                                            detector.close();
+//                                            detector.close();
                                         }
                                     }
                                 }, 2000);
@@ -178,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                 result.toFile(
                         new File(getExternalFilesDir(AppConstant.DIRNAME), AppConstant.FILENAME)
                         , file -> {
+                            detector.close();
                             BottomsheetResult bottomsheetResult = new BottomsheetResult(MainActivity.this, file, MainActivity.this);
                             bottomsheetResult.setCancelable(false);
                             bottomsheetResult.show(getSupportFragmentManager(), bottomsheetResult.getTag());
@@ -194,11 +211,18 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
 
     @OnClick(R.id.switchCamera)
     public void switchCamera(){
+        detector.close();
         if (cameraView.getFacing() == Facing.FRONT){
             cameraView.setFacing(Facing.BACK);
+            boundOverlay.setCameraInfo(cameraView.getWidth(), cameraView.getHeight(), cameraView.getFacing());
         } else {
             cameraView.setFacing(Facing.FRONT);
+            boundOverlay.setCameraInfo(0, 0, cameraView.getFacing());
         }
+        boundOverlay.clear();
+        boundOverlay.invalidate();
+        boundOverlay.postInvalidate();
+        frameProcessor();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -206,12 +230,12 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     public void controlFrame(){
         if (!isPlay){
             isPlay = true;
-            frameProcessor();
+//            frameProcessor();
             controlFrame.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_frame));
         } else {
             isPlay = false;
-            cameraView.clearFrameProcessors();
-            detector.close();
+//            cameraView.clearFrameProcessors();
+//            detector.close();
             controlFrame.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_frame));
         }
     }
@@ -225,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @Override
     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
         startCamera();
+        frameProcessor();
     }
 
     @Override

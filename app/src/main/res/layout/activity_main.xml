@@ -7,6 +7,7 @@
     android:keepScreenOn="true"
     tools:context=".MainActivity">
         <com.otaliastudios.cameraview.CameraView
+            android:adjustViewBounds="true"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -33,16 +34,8 @@
             app:cameraPictureSizeBiggest="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-                <ImageView
-                    android:layout_marginTop="30dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:layout_gravity="top|end"
-                    android:src="@drawable/logo"
-                    app:layout_drawOnPreview="true"
-                    app:layout_drawOnPictureSnapshot="true"/>
         </com.otaliastudios.cameraview.CameraView>
-        <dev.mhandharbeni.termoapps20.views.FaceBoundOverlay
+        <dev.mhandharbeni.termoapps20.views.GraphicOverlay
             android:id="@+id/boundOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
@@ -88,6 +81,15 @@
             android:src="@drawable/ic_guest"
             android:layout_width="50dp"
             android:layout_height="50dp"/>
+        <ImageView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/showLogGuest"
+            app:layout_constraintRight_toLeftOf="@id/showLog"
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:src="@drawable/logo"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

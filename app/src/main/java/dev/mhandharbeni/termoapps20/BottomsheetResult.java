@@ -132,6 +132,7 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
         this.activity = activity;
         this.file = file;
         this.bottomsheetResultCallback = bottomsheetResultCallback;
+        sImageBase64 = "null";
     }
 
     @Nullable
