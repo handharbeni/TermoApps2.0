@@ -29,6 +29,8 @@ public class AppConstant {
     public static final long MILLISINTERVAL = 1000;
     public static final long MILLISINFUTURE = 10 * MILLISINTERVAL;
 
+    public static final boolean MULTIFACE = false;
+
     public enum STATE_FETCH{
         WHOISIT,
         REALTIMETRAINING,

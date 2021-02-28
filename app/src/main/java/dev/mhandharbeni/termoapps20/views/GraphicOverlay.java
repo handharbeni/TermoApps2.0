@@ -72,7 +72,7 @@ public class GraphicOverlay  extends View {
             if (mOverlay.mFacing == Facing.FRONT) {
                 return (mOverlay.getWidth() - scaleX(x)) + (x / 2f);
             } else {
-                return scaleX(x) - (x / 2f);
+                return scaleX(x) - (x / 4f);
             }
         }
 

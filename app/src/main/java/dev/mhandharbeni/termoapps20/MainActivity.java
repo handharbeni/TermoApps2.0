@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                 new FaceDetectorOptions.Builder()
                         .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
                         .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-                        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
+                        .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
                         .enableTracking()
                         .build();
 
@@ -133,26 +133,19 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             detector.process(image)
                     .addOnSuccessListener(
                             faces -> {
-//                                boundOverlay.updateFaces(faces);
-//                                boundOverlay.draw
-//                                if (faces.size() > 0){
-//                                    Paint paint = new Paint();
-//                                    paint.setColor(getResources().getColor(R.color.warm_grey));
-//
-//                                    RectF rectF = new RectF();
-//                                    rectF.set(faces.get(0).getBoundingBox());
-//                                    cameraView.startAutoFocus(rectF);
-//                                }
                                 boundOverlay.clear();
-//                                for (Face face : faces) {
-//                                    Rect boundingBox = face.getBoundingBox();
-//                                    RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
-//                                    boundOverlay.add(rectOverlay);
-//                                }
-                                if (faces.size() > 0){
-                                    Rect boundingBox = faces.get(0).getBoundingBox();
-                                    RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
-                                    boundOverlay.add(rectOverlay);
+                                if (AppConstant.MULTIFACE){
+                                    for (Face face : faces) {
+                                        Rect boundingBox = face.getBoundingBox();
+                                        RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
+                                        boundOverlay.add(rectOverlay);
+                                    }
+                                } else {
+                                    if (faces.size() > 0){
+                                        Rect boundingBox = faces.get(0).getBoundingBox();
+                                        RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
+                                        boundOverlay.add(rectOverlay);
+                                    }
                                 }
                                 new Handler().postDelayed(() -> {
                                     if (isPlay){
