@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Message;
@@ -23,6 +24,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -102,6 +105,9 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     @BindView(R.id.btnAbsenOut)
     Button btnAbsenOut;
 
+    @BindView(R.id.exit)
+    Button exit;
+
     ProgressDialog progressDialog;
 
     AppConstant.STATE_FETCH currentState;
@@ -109,6 +115,8 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     private boolean isEmployee = false;
     private CountDownTimer countDownTimer;
+
+    private String sImageBase64 = "null";
 
     public static BottomsheetResult newInstance(
             Activity activity,
@@ -174,21 +182,46 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     private String encodeImage(File file){
         try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                Bitmap src= BitmapFactory.decodeFile(file.getAbsolutePath());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                src.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                return Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
-            } else {
-                FileInputStream fis = new FileInputStream(file);
-                Bitmap bitmap = BitmapFactory.decodeStream(fis);
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                return Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
-            }
+            sImageBase64 = sImageBase64.equalsIgnoreCase("null") ? encodeBitmap(rotateImage(file)) : sImageBase64;
+            return sImageBase64;
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+//                Bitmap src= BitmapFactory.decodeFile(file.getAbsolutePath());
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                src.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                return Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+//            } else {
+//                FileInputStream fis = new FileInputStream(file);
+//                Bitmap bitmap = BitmapFactory.decodeStream(fis);
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                return Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
+//            }
         } catch (Exception ignored){
             return null;
         }
+    }
+
+    private Bitmap rotateImage(File file) throws IOException {
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath());
+        ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.postRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.postRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.postRotate(270);
+                break;
+            default:
+                break;
+        }
+        return Bitmap.createBitmap
+                (bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
     }
 
     @Override
@@ -407,6 +440,21 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
         }
     }
 
+    @OnClick(R.id.exit)
+    public void exit(){
+        try {
+            if (countDownTimer != null){
+                countDownTimer.cancel();
+            }
+            if (progressDialog != null){
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
+            bottomsheetResultCallback.dismissDialog();
+            dismissAllowingStateLoss();
+        } catch (Exception e){}
+    }
+
     @Override
     public void fetchFailed() {
         progressDialog.dismiss();
@@ -454,7 +502,6 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     public void onCompleteVoid(Task<Void> task) {
 
     }
-
 
     public interface BottomsheetResultCallback{
         void dismissDialog();

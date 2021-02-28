@@ -2,12 +2,19 @@ package dev.mhandharbeni.termoapps20;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.PointF;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 
@@ -26,6 +33,8 @@ import com.otaliastudios.cameraview.PictureResult;
 import com.otaliastudios.cameraview.controls.Facing;
 import com.otaliastudios.cameraview.controls.Hdr;
 import com.otaliastudios.cameraview.controls.PictureFormat;
+import com.otaliastudios.cameraview.markers.AutoFocusMarker;
+import com.otaliastudios.cameraview.markers.AutoFocusTrigger;
 import com.otaliastudios.cameraview.size.AspectRatio;
 import com.otaliastudios.cameraview.size.SizeSelector;
 import com.otaliastudios.cameraview.size.SizeSelectors;
@@ -113,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             InputImage image = InputImage.fromByteArray(frame.getData(),
                     frame.getSize().getWidth(),
                     frame.getSize().getHeight(),
-                    frame.getRotationToView(),
+                    frame.getRotationToUser(),
                     InputImage.IMAGE_FORMAT_NV21
             );
             detector.process(image)
@@ -121,6 +130,14 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                             faces -> {
 //                                boundOverlay.updateFaces(faces);
 //                                boundOverlay.draw
+//                                if (faces.size() > 0){
+//                                    Paint paint = new Paint();
+//                                    paint.setColor(getResources().getColor(R.color.warm_grey));
+//
+//                                    RectF rectF = new RectF();
+//                                    rectF.set(faces.get(0).getBoundingBox());
+//                                    cameraView.startAutoFocus(rectF);
+//                                }
                                 new Handler().postDelayed(() -> {
                                     if (isPlay){
                                         if (faces.size() > 0 && !isTakingPicture){
@@ -130,7 +147,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                                             detector.close();
                                         }
                                     }
-                                }, 500);
+                                }, 2000);
                             })
                     .addOnFailureListener(
                             Throwable::printStackTrace);
@@ -157,6 +174,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         cameraView.addCameraListener(new CameraListener() {
             @Override
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
+                Log.d(TAG, "onPictureTaken: "+result.getRotation());
                 result.toFile(
                         new File(getExternalFilesDir(AppConstant.DIRNAME), AppConstant.FILENAME)
                         , file -> {

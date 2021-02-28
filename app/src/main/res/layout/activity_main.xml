@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".MainActivity">
         <com.otaliastudios.cameraview.CameraView
             app:layout_constraintTop_toTopOf="parent"
@@ -45,10 +46,6 @@
             android:id="@+id/boundOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-<!--        <husaynhakeem.io.facedetector.FaceBoundsOverlay-->
-<!--            android:id="@+id/faceBoundsOverlay"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"/>-->
         <io.fotoapparat.facedetector.view.RectanglesView
             app:rectanglesColor="@color/white"
             app:rectanglesStrokeWidth="2dp"
