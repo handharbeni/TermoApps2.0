@@ -77,52 +77,56 @@ public class DetailFragment extends Fragment implements FirestoreModule.Firestor
     }
 
     void init(){
-        LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        try {
+            LinearLayoutManager llm = new LinearLayoutManager(getActivity().getApplicationContext());
+            llm.setOrientation(LinearLayoutManager.VERTICAL);
 
-        pegawaiAdapter = new PegawaiAdapter(getActivity().getApplicationContext(), listAbsen);
+            pegawaiAdapter = new PegawaiAdapter(getActivity().getApplicationContext(), listAbsen);
 
-        rvDetail.setLayoutManager(llm);
-        rvDetail.setAdapter(pegawaiAdapter);
+            rvDetail.setLayoutManager(llm);
+            rvDetail.setAdapter(pegawaiAdapter);
+        } catch (Exception ignored){}
     }
 
     void fetchData(){
-        mProgressDialog = ProgressDialog.show(activity, "DETAIL REPORT", "FETCHING DATA");
-        firestoreModule.getListDataByMode(
-                AppConstant.PARENT,
-                dateMillis,
-                AppConstant.MODE.PEGAWAI.getValue())
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    listAbsen.clear();
-                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                        Absen absen = new Absen();
-                        absen.setName(document.get(AppConstant.NAMA).toString());
-                        absen.setNik(document.get(AppConstant.NIK).toString());
-                        absen.setAbsenIn(document.get(AppConstant.ABSENIN).toString());
-                        absen.setAbsenOut(document.get(AppConstant.ABSENOUT).toString());
-                        absen.setSuhuin(document.get(AppConstant.SUHUIN).toString());
-                        absen.setSuhuOut(document.get(AppConstant.SUHUOUT).toString());
+        try {
+            mProgressDialog = ProgressDialog.show(activity, "DETAIL REPORT", "FETCHING DATA");
+            firestoreModule.getListDataByMode(
+                    AppConstant.PARENT,
+                    dateMillis,
+                    AppConstant.MODE.PEGAWAI.getValue())
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        listAbsen.clear();
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            Absen absen = new Absen();
+                            absen.setName(document.get(AppConstant.NAMA).toString());
+                            absen.setNik(document.get(AppConstant.NIK).toString());
+                            absen.setAbsenIn(document.get(AppConstant.ABSENIN).toString());
+                            absen.setAbsenOut(document.get(AppConstant.ABSENOUT).toString());
+                            absen.setSuhuin(document.get(AppConstant.SUHUIN).toString());
+                            absen.setSuhuOut(document.get(AppConstant.SUHUOUT).toString());
 
-                        listAbsen.add(absen);
-                    }
+                            listAbsen.add(absen);
+                        }
 
-                    init();
+                        init();
 
-                    if (mProgressDialog != null){
-                        mProgressDialog.dismiss();
-                        mProgressDialog = null;
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Messages.showAlertMessage(
-                            activity,
-                            "DETAIL REPORT",
-                            "FAILED TO FETCH DATA");
-                    if (mProgressDialog != null){
-                        mProgressDialog.dismiss();
-                        mProgressDialog = null;
-                    }
-                });
+                        if (mProgressDialog != null){
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Messages.showAlertMessage(
+                                activity,
+                                "DETAIL REPORT",
+                                "FAILED TO FETCH DATA");
+                        if (mProgressDialog != null){
+                            mProgressDialog.dismiss();
+                            mProgressDialog = null;
+                        }
+                    });
+        } catch (Exception ignored){}
     }
 
     @Override

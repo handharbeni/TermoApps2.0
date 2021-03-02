@@ -69,11 +69,18 @@ public class GraphicOverlay  extends View {
         public float translateX(float x) {
 //            return scaleX(x);
 //            return mOverlay.getWidth() - scaleX(x);
+//            if (mOverlay.mFacing == Facing.FRONT) {
+//                return (mOverlay.getWidth() - scaleX(x)) + (x / 4f);
+//            } else {
+//                return scaleX(x) - (x / 4f);
+//            }
+
             if (mOverlay.mFacing == Facing.FRONT) {
-                return (mOverlay.getWidth() - scaleX(x)) + (x / 2f);
+                return (mOverlay.getWidth() - scaleX(x));
             } else {
-                return scaleX(x) - (x / 4f);
+                return scaleX(x);
             }
+
         }
 
         /**
@@ -81,7 +88,8 @@ public class GraphicOverlay  extends View {
          * system.
          */
         public float translateY(float y) {
-            return scaleY(y) - (y / 4f);
+//            return scaleY(y) - (y / 4f);
+            return scaleY(y);
         }
 
         public void postInvalidate() {
