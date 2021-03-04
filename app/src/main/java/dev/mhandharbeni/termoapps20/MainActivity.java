@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.felhr.utils.HexData;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
@@ -53,6 +55,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Set;
 
@@ -105,12 +109,17 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     int delayTakePicture = 5 * 1000;
     boolean isTakingPicture = false;
 
+    boolean hasReturn = false;
+    String currentSuhu = "0";
+    File files;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mHandler = new MainHandler(this);
         ButterKnife.bind(this);
-        boundOverlay.setCameraInfo(cameraView.getWidth(), cameraView.getHeight(), cameraView.getFacing());
         checkPermission();
     }
 
@@ -131,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                 new FaceDetectorOptions.Builder()
                         .setContourMode(FaceDetectorOptions.CONTOUR_MODE_ALL)
                         .setLandmarkMode(FaceDetectorOptions.LANDMARK_MODE_ALL)
-//                        .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)
                         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_FAST)
                         .enableTracking()
                         .build();
@@ -147,21 +155,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             detector.process(image)
                     .addOnSuccessListener(
                             faces -> {
-//                                boundOverlay.clear();
-//                                if (AppConstant.MULTIFACE){
-//                                    for (Face face : faces) {
-//                                        Rect boundingBox = face.getBoundingBox();
-//                                        RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
-//                                        boundOverlay.add(rectOverlay);
-//                                    }
-//                                } else {
-//                                    if (faces.size() > 0){
-//                                        Rect boundingBox = faces.get(0).getBoundingBox();
-//                                        RectOverlay rectOverlay = new RectOverlay(boundOverlay, boundingBox);
-//                                        boundOverlay.add(rectOverlay);
-//                                    }
-//                                }
-                                new Handler().postDelayed(() -> {
+                                cameraView.getHandler().postDelayed(() -> {
                                     if (isPlay){
                                         if (faces.size() > 0 && !isTakingPicture){
                                             cameraTakePicture();
@@ -197,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         cameraView.setPictureMetering(true);
         cameraView.setPictureSize(result);
         cameraView.setPictureMetering(true);
-        cameraView.setPreviewStreamSize((SizeSelector) source -> {
+        cameraView.setPreviewStreamSize(source -> {
             if (source.size() > 0) {
                 pWidth = source.get(0).getWidth();
                 pHeight = source.get(0).getHeight();
@@ -208,10 +202,11 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         cameraView.addCameraListener(new CameraListener() {
             @Override
             public void onPictureTaken(@NonNull @NotNull PictureResult result) {
-                Log.d(TAG, "onPictureTaken: "+result.getRotation());
                 result.toFile(
                         new File(getExternalFilesDir(AppConstant.DIRNAME), AppConstant.FILENAME)
                         , file -> {
+                            files = file;
+
                             closeFrameProcessor();
                             BottomsheetResult bottomsheetResult = new BottomsheetResult(MainActivity.this, file, MainActivity.this);
                             bottomsheetResult.setCancelable(false);
@@ -219,22 +214,20 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                         });
             }
         });
-
-        boundOverlay.setCameraInfo(pWidth, pHeight, cameraView.getFacing());
         cameraView.open();
     }
 
     @OnClick(R.id.takePicture)
     public void cameraTakePicture(){
-        runOnUiThread(() -> {
-            if (usbService != null) {
-//                usbService.changeBaudRate(9600);
+        if (usbService != null){
+            if (deviceConnected){
                 usbService.write(("F2010100"+ Utils.newline_crlf).getBytes());
                 usbService.write(("F1010100"+ Utils.newline_crlf).getBytes());
+            } else {
+                Messages.showAlertMessage(this, "USB Services", "No Sensor detected");
+                cameraView.takePicture();
             }
-        });
-
-//        if (!isTakingPicture) cameraView.takePicture();
+        }
     }
 
     @OnClick(R.id.switchCamera)
@@ -245,11 +238,6 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             cameraView.setFacing(Facing.FRONT);
         }
         restartFrameProcessor();
-//        boundOverlay.setCameraInfo(cameraView.getWidth(), cameraView.getHeight(), cameraView.getFacing());
-//        boundOverlay.clear();
-//        boundOverlay.invalidate();
-//        boundOverlay.postInvalidate();
-//        frameProcessor();
     }
 
     @OnClick(R.id.controlFrame)
@@ -290,13 +278,8 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @Override
     public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
         try {
-            mHandler = new MainHandler(this);
             startCamera();
             openFrameProcessor();
-
-            setFilters();
-            startService(UsbService.class, usbConnection, null);
-
         } catch (Exception ignored){}
     }
 
@@ -322,6 +305,10 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @Override
     public void onResume() {
         super.onResume();
+        try {
+            setFilters();
+            startService(UsbService.class, usbConnection, null);
+        } catch (Exception ignored){}
     }
 
     @Override
@@ -331,6 +318,43 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             unregisterReceiver(mUsbReceiver);
             unbindService(usbConnection);
         } catch (Exception ignored){}
+    }
+
+    public void convertSuhu(String buffer){
+        try {
+            String[] sBuffer = buffer.split(Utils.newline_crlf);
+            for (String s : sBuffer) {
+                boolean header = s.startsWith("F1");
+                if (header){
+                    hasReturn = true;
+                    String sData = s.substring(2);
+                    String totalData = sData.substring(0, 2);
+                    String keyData = sData.substring(2, 4);
+                    String contentData = sData.substring(4, sData.length()-2);
+                    String checkSum = sData.substring(sData.length() - 2);
+
+                    StringBuilder sContentData = new StringBuilder();
+                    for (int i = 0; i < (contentData.length() / 2); i++) {
+                        String aData = contentData.substring(i*2, (i+1)*2);
+                        String arg = "0x"+(aData.charAt(1) + "" + aData.charAt(0));
+                        byte b = (byte) (Integer.decode(arg).byteValue() ^ Integer.decode("0x"+keyData).byteValue());
+                        sContentData.append(String.format("%02X ", b));
+                    }
+
+                    long i = Long.parseLong(sContentData.toString().replace(" ", ""), 16);
+                    float f = Float.intBitsToFloat((int) i);
+                    currentSuhu = Utils.round(f, 2).toString();
+                }
+            }
+        } catch (Exception ignored){
+
+        } finally {
+//            if (hasReturn){
+//
+//            }
+            Messages.showSuccessMessage(MainActivity.this, "USB Service", "Suhu anda "+currentSuhu);
+            cameraView.takePicture();
+        }
     }
 
     private void startService(Class<?> service, ServiceConnection serviceConnection, Bundle extras) {
@@ -366,24 +390,29 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
+                    deviceConnected = true;
                     Messages.showSuccessMessage(MainActivity.this, "USB Service", "USB Ready");
                     break;
                 case UsbService.ACTION_USB_PERMISSION_NOT_GRANTED: // USB PERMISSION NOT GRANTED
+                    deviceConnected = false;
                     Messages.showAlertMessage(MainActivity.this, "USB Service", "USB Permission not granted");
                     break;
                 case UsbService.ACTION_NO_USB: // NO USB CONNECTED
+                    deviceConnected = false;
                     Messages.showWarningMessage(MainActivity.this, "USB Service", "No USB connected");
                     break;
                 case UsbService.ACTION_USB_DISCONNECTED: // USB DISCONNECTED
+                    deviceConnected = false;
                     Messages.showAlertMessage(MainActivity.this, "USB Service", "USB disconnected");
                     break;
                 case UsbService.ACTION_USB_NOT_SUPPORTED: // USB NOT SUPPORTED
+                    deviceConnected = false;
                     Messages.showWarningMessage(MainActivity.this, "USB Service", "USB device not supported");
                     break;
             }
         }
     };
-
+    private boolean deviceConnected = false;
     private UsbService usbService;
     private MainHandler mHandler;
     private final ServiceConnection usbConnection = new ServiceConnection() {
@@ -414,19 +443,14 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             switch (msg.what) {
                 case UsbService.MESSAGE_FROM_SERIAL_PORT:
                     String data = (String) msg.obj;
-                    Log.d("MainActivity", "handleMessage: data "+data);
 //                    mActivity.get().display.append(data);
                     break;
                 case UsbService.CTS_CHANGE:
-                    Messages.showSuccessMessage(mActivity.get(), "USB Service", "CTS CHANGE");
-                    break;
                 case UsbService.DSR_CHANGE:
-                    Messages.showSuccessMessage(mActivity.get(), "USB Service", "DSR CHANGE");
                     break;
                 case UsbService.SYNC_READ:
                     String buffer = (String) msg.obj;
-                    Log.d("MainActivity", "handleMessage: buffer "+buffer);
-//                    mActivity.get().display.append(buffer);
+                    mActivity.get().convertSuhu(buffer);
                     break;
             }
         }

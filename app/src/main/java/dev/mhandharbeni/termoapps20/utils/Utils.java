@@ -8,6 +8,7 @@ import android.text.style.BackgroundColorSpan;
 import androidx.annotation.ColorInt;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -291,5 +292,11 @@ public class Utils {
                 sb.append(s.charAt(pos));
             }
         return sb;
+    }
+
+    public static BigDecimal round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd;
     }
 }

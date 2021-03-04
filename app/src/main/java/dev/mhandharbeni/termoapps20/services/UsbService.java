@@ -67,9 +67,9 @@ public class UsbService extends Service {
     private final UsbSerialInterface.UsbReadCallback mCallback = new UsbSerialInterface.UsbReadCallback() {
         @Override
         public void onReceivedData(byte[] arg0) {
-            String data = new String(arg0, StandardCharsets.UTF_8);
-            if (mHandler != null)
-                mHandler.obtainMessage(MESSAGE_FROM_SERIAL_PORT, data).sendToTarget();
+//            String data = new String(arg0, StandardCharsets.UTF_8);
+//            if (mHandler != null)
+//                mHandler.obtainMessage(MESSAGE_FROM_SERIAL_PORT, data).sendToTarget();
         }
     };
 
@@ -79,8 +79,8 @@ public class UsbService extends Service {
     private UsbSerialInterface.UsbCTSCallback ctsCallback = new UsbSerialInterface.UsbCTSCallback() {
         @Override
         public void onCTSChanged(boolean state) {
-            if(mHandler != null)
-                mHandler.obtainMessage(CTS_CHANGE).sendToTarget();
+//            if(mHandler != null)
+//                mHandler.obtainMessage(CTS_CHANGE).sendToTarget();
         }
     };
 
@@ -90,8 +90,8 @@ public class UsbService extends Service {
     private UsbSerialInterface.UsbDSRCallback dsrCallback = new UsbSerialInterface.UsbDSRCallback() {
         @Override
         public void onDSRChanged(boolean state) {
-            if(mHandler != null)
-                mHandler.obtainMessage(DSR_CHANGE).sendToTarget();
+//            if(mHandler != null)
+//                mHandler.obtainMessage(DSR_CHANGE).sendToTarget();
         }
     };
     /*
@@ -170,7 +170,7 @@ public class UsbService extends Service {
      */
     public void write(byte[] data) {
         if (serialPort != null)
-            serialPort.syncWrite(data, 0);
+            serialPort.syncWrite(data, 500);
     }
 
     /*
@@ -267,8 +267,8 @@ public class UsbService extends Service {
                     serialPort.setDataBits(UsbSerialInterface.DATA_BITS_8);
                     serialPort.setStopBits(UsbSerialInterface.STOP_BITS_2);
                     serialPort.setParity(UsbSerialInterface.PARITY_NONE);
-                    serialPort.setRTS(true);
-                    serialPort.setDTR(true);
+//                    serialPort.setRTS(true);
+//                    serialPort.setDTR(true);
                     /**
                      * Current flow control Options:
                      * UsbSerialInterface.FLOW_CONTROL_OFF
@@ -314,7 +314,7 @@ public class UsbService extends Service {
         public void run() {
             while(true){
                 byte[] buffer = new byte[100];
-                int n = serialPort.syncRead(buffer, 0);
+                int n = serialPort.syncRead(buffer, 500);
                 if(n > 0) {
                     byte[] received = new byte[n];
                     System.arraycopy(buffer, 0, received, 0, n);
