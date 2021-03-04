@@ -218,7 +218,13 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                             files = file;
 
                             closeFrameProcessor();
-                            BottomsheetResult bottomsheetResult = new BottomsheetResult(MainActivity.this, file, MainActivity.this);
+                            BottomsheetResult bottomsheetResult =
+                                    new BottomsheetResult(
+                                            MainActivity.this,
+                                            file,
+                                            currentSuhu,
+                                            MainActivity.this
+                                    );
                             bottomsheetResult.setCancelable(false);
                             bottomsheetResult.show(getSupportFragmentManager(), bottomsheetResult.getTag());
                         });
@@ -389,8 +395,6 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
             Messages.showAlertMessage(this, "USB Services", "Service not running, please restart Apps");
         }
     }
-
-
 
     public void processSuhu(Float suhu){
         if (checkSuhu){

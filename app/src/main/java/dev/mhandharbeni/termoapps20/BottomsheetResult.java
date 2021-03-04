@@ -71,6 +71,7 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     Activity activity;
     Subscription mSubscription;
     File file;
+    String currentSuhu;
     BottomsheetResultCallback bottomsheetResultCallback;
     ResultPresenter resultPresenter;
     View view;
@@ -121,16 +122,19 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     public static BottomsheetResult newInstance(
             Activity activity,
             File file,
+            String currentSuhu,
             BottomsheetResultCallback bottomsheetResultCallback) {
-        return new BottomsheetResult(activity, file, bottomsheetResultCallback);
+        return new BottomsheetResult(activity, file, currentSuhu, bottomsheetResultCallback);
     }
 
     public BottomsheetResult(
             Activity activity,
             File file,
+            String currentSuhu,
             BottomsheetResultCallback bottomsheetResultCallback) {
         this.activity = activity;
         this.file = file;
+        this.currentSuhu = currentSuhu;
         this.bottomsheetResultCallback = bottomsheetResultCallback;
         sImageBase64 = "null";
     }
@@ -392,7 +396,7 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
                             "-",
                             encodeImage(file),
                             sMillis,
-                            "0"
+                            currentSuhu
                     )
             ).addOnSuccessListener(unused -> {
                 if (progressDialog != null){
@@ -423,12 +427,12 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
 
     @OnClick(R.id.btnAbsenIn)
     public void absenIn(){
-        resultPresenter.absenIn(name.getText().toString(), nik.getText().toString());
+        resultPresenter.absenIn(name.getText().toString(), nik.getText().toString(), currentSuhu);
     }
 
     @OnClick(R.id.btnAbsenOut)
     public void absenOut(){
-        resultPresenter.absenOut(name.getText().toString(), nik.getText().toString());
+        resultPresenter.absenOut(name.getText().toString(), nik.getText().toString(), currentSuhu);
     }
 
     @OnClick(R.id.ok)

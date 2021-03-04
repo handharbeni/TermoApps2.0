@@ -214,7 +214,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         }, whoIsItMM);
     }
 
-    public void absenIn(String sNama, String sNik){
+    public void absenIn(String sNama, String sNik, String suhu){
         getMvpView().fetchLoad("SAVE ABSEN IN");
         firestoreModule.getDataFromStore(
                 AppConstant.PARENT,
@@ -234,7 +234,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
                     } else {
                         sAbsenIn = String.valueOf(System.currentTimeMillis());
                         sAbsenOut = "0";
-                        sSuhuIn = "0";
+                        sSuhuIn = suhu;
                         sSuhuOut = "0";
                     }
                     firestoreModule.writeLogToStore(
@@ -254,7 +254,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
                     getMvpView().fetchSuccess(null);
                 });
     }
-    public void absenOut(String sNama, String sNik){
+    public void absenOut(String sNama, String sNik, String suhu){
         getMvpView().fetchLoad("SAVE ABSEN OUT");
         firestoreModule.getDataFromStore(
                 AppConstant.PARENT,
@@ -275,7 +275,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
                         sAbsenIn = "0";
                         sAbsenOut = String.valueOf(System.currentTimeMillis());
                         sSuhuIn = "0";
-                        sSuhuOut = "0";
+                        sSuhuOut = suhu;
                     }
                     firestoreModule.writeLogToStore(
                             AppConstant.PARENT,
