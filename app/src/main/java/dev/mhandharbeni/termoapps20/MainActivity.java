@@ -20,6 +20,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -102,6 +103,15 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
 
     @BindView(R.id.showLogGuest)
     AppCompatImageButton showLogGuest;
+
+    @BindView(R.id.overlaySuhuRed)
+    View overlaySuhuRed;
+
+    @BindView(R.id.overlaySuhuGreen)
+    View overlaySuhuGreen;
+
+    @BindView(R.id.textSuhu)
+    TextView textSuhu;
 
     boolean isPlay = false;
     FaceDetector detector;
@@ -224,9 +234,11 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                 usbService.write(("F2010100"+ Utils.newline_crlf).getBytes());
                 usbService.write(("F1010100"+ Utils.newline_crlf).getBytes());
             } else {
-                Messages.showAlertMessage(this, "USB Services", "No Sensor detected");
+//                Messages.showAlertMessage(this, "USB Services", "No Sensor detected");
                 cameraView.takePicture();
             }
+        } else {
+            cameraView.takePicture();
         }
     }
 
@@ -297,6 +309,11 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @Override
     public void dismissDialog() {
         try {
+            checkSuhu = false;
+
+            overlaySuhuRed.setVisibility(View.GONE);
+            overlaySuhuGreen.setVisibility(View.GONE);
+
             isTakingPicture = false;
             openFrameProcessor();
         } catch (Exception e){}
@@ -343,17 +360,53 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
 
                     long i = Long.parseLong(sContentData.toString().replace(" ", ""), 16);
                     float f = Float.intBitsToFloat((int) i);
+                    processSuhu(f);
                     currentSuhu = Utils.round(f, 2).toString();
                 }
             }
         } catch (Exception ignored){
-
         } finally {
-//            if (hasReturn){
-//
-//            }
-            Messages.showSuccessMessage(MainActivity.this, "USB Service", "Suhu anda "+currentSuhu);
-            cameraView.takePicture();
+            if (!checkSuhu){
+                cameraView.takePicture();
+            }
+        }
+    }
+
+    boolean checkSuhu = false;
+
+    @OnClick(R.id.textSuhu)
+    public void checkSuhu(){
+        if (usbService != null){
+            if (deviceConnected){
+                checkSuhu = true;
+
+                usbService.write(("F2010100"+ Utils.newline_crlf).getBytes());
+                usbService.write(("F1010100"+ Utils.newline_crlf).getBytes());
+            } else {
+                Messages.showAlertMessage(this, "USB Services", "Sensor not detected");
+            }
+        } else {
+            Messages.showAlertMessage(this, "USB Services", "Service not running, please restart Apps");
+        }
+    }
+
+
+
+    public void processSuhu(Float suhu){
+        if (checkSuhu){
+            new Handler().postDelayed(() -> {
+                checkSuhu = false;
+                overlaySuhuRed.setVisibility(View.GONE);
+                overlaySuhuGreen.setVisibility(View.GONE);
+            }, 1000);
+        }
+        textSuhu.setText(String.format("SUHU: %s' C", Utils.round(suhu, 2).toString()));
+        if (suhu > 36){
+            overlaySuhuRed.setVisibility(View.VISIBLE);
+            overlaySuhuGreen.setVisibility(View.GONE);
+        } else {
+            overlaySuhuRed.setVisibility(View.GONE);
+            overlaySuhuGreen.setVisibility(View.VISIBLE);
         }
     }
 
