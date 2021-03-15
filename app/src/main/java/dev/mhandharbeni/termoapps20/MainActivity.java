@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -326,11 +327,30 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         try {
-            setFilters();
             startService(UsbService.class, usbConnection, null);
+            if (getIntent().getAction().equalsIgnoreCase("android.hardware.usb.action.USB_DEVICE_ATTACHED")){
+                deviceConnected = true;
+                Messages.showSuccessMessage(MainActivity.this, "USB Service", "USB Ready");
+            }
+            setFilters();
+            Log.d(TAG, "onResume: "+getIntent().getAction());
+//            switch (getIntent().getAction()){
+//                case UsbManager.ACTION_USB_DEVICE_ATTACHED:
+//                case AppConstant.INTENT_ACTION_GRANT_USB :
+//                    deviceConnected = true;
+//                    Messages.showSuccessMessage(MainActivity.this, "USB Service", "USB Ready");
+//                    break;
+//            }
+
+
         } catch (Exception ignored){}
     }
 
@@ -432,6 +452,8 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
 
     private void setFilters() {
         IntentFilter filter = new IntentFilter();
+//        filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+//        filter.addAction(AppConstant.INTENT_ACTION_GRANT_USB);
         filter.addAction(UsbService.ACTION_USB_PERMISSION_GRANTED);
         filter.addAction(UsbService.ACTION_NO_USB);
         filter.addAction(UsbService.ACTION_USB_DISCONNECTED);
@@ -445,7 +467,10 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     private final BroadcastReceiver mUsbReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive: "+intent.getAction());
             switch (intent.getAction()) {
+//                case UsbManager.ACTION_USB_DEVICE_ATTACHED:
+//                case AppConstant.INTENT_ACTION_GRANT_USB :
                 case UsbService.ACTION_USB_PERMISSION_GRANTED: // USB PERMISSION GRANTED
                     deviceConnected = true;
                     Messages.showSuccessMessage(MainActivity.this, "USB Service", "USB Ready");
