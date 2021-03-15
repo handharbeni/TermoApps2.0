@@ -199,7 +199,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().whoIsItMM(new Subscriber<WhoIsItMMResponse>() {
             @Override
             public void onCompleted() {
-
+                getMvpView().fetchFailed();
             }
 
             @Override

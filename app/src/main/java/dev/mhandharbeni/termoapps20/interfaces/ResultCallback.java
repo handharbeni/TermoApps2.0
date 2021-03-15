@@ -11,5 +11,6 @@ public class ResultCallback {
         void fetchLoad(String message);
         void fetchSuccess(Object anyClass);
         void fetchFailed();
+        void fetchComplete();
     }
 }

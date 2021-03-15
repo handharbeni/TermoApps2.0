@@ -68,6 +68,10 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
         ResultCallback.ResultResponseCallback,
         FirestoreModule.FirestoreModuleCallback {
     private final String TAG = BottomsheetResult.class.getSimpleName();
+
+    public final static String MODE_GUEST = "GUEST";
+    public final static String MODE_EMPLOYEE = "EMPLOYEE";
+
     Activity activity;
     Subscription mSubscription;
     File file;
@@ -75,6 +79,8 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     BottomsheetResultCallback bottomsheetResultCallback;
     ResultPresenter resultPresenter;
     View view;
+
+    String mode = "guest";
 
     @BindView(R.id.imageResult)
     ImageView imageResult;
@@ -123,18 +129,21 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
             Activity activity,
             File file,
             String currentSuhu,
+            String mode,
             BottomsheetResultCallback bottomsheetResultCallback) {
-        return new BottomsheetResult(activity, file, currentSuhu, bottomsheetResultCallback);
+        return new BottomsheetResult(activity, file, currentSuhu, mode, bottomsheetResultCallback);
     }
 
     public BottomsheetResult(
             Activity activity,
             File file,
             String currentSuhu,
+            String mode,
             BottomsheetResultCallback bottomsheetResultCallback) {
         this.activity = activity;
         this.file = file;
         this.currentSuhu = currentSuhu;
+        this.mode = mode;
         this.bottomsheetResultCallback = bottomsheetResultCallback;
         sImageBase64 = "null";
     }
@@ -344,32 +353,44 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
             if (whoIsItMMResponse.getData().size() > 0){
                 String person = whoIsItMMResponse.getData().get(0).getPersonInPicture();
                 if (person.equalsIgnoreCase("unknown")){
-                    ok.setText("OK & SAVE GUEST LOG");
-                    addUser.setVisibility(View.VISIBLE);
-                    countDownTimer = new CountDownTimer(AppConstant.MILLISINFUTURE
-                            , AppConstant.MILLISINTERVAL){
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            long lResult = millisUntilFinished / 1000;
-                            if (lResult == 0) ok.setText("OK & SAVE GUEST LOG");
-                            else ok.setText(String.format("OK & SAVE GUEST LOG (%s)", String.valueOf(lResult)));
-                        }
+                    if (mode.equalsIgnoreCase(MODE_GUEST)) {
+                        ok.setText("OK & SAVE GUEST LOG");
+                        addUser.setVisibility(View.VISIBLE);
+                        countDownTimer = new CountDownTimer(AppConstant.MILLISINFUTURE
+                                , AppConstant.MILLISINTERVAL){
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                                long lResult = millisUntilFinished / 1000;
+                                if (lResult == 0) ok.setText("OK & SAVE GUEST LOG");
+                                else ok.setText(String.format("OK & SAVE GUEST LOG (%s)", String.valueOf(lResult)));
+                            }
 
-                        @Override
-                        public void onFinish() {
-                            ok.setText("SAVING");
-                            proceedGuest();
-                        }
-                    };
-                    countDownTimer.start();
+                            @Override
+                            public void onFinish() {
+                                ok.setText("SAVING");
+                                proceedGuest();
+                            }
+                        };
+                        countDownTimer.start();
+                    } else {
+                        Messages.showAlertMessage(activity, "Result","Employee Not detected, please switch mode" );
+                        bottomsheetResultCallback.dismissDialog();
+                        dismissAllowingStateLoss();
+                    }
                 } else {
-                    isEmployee = true;
-                    ok.setText("OK");
-                    name.setText(person);
-                    nik.setText(whoIsItMMResponse.getData().get(0).getPipNik());
-                    llAbsen.setVisibility(View.VISIBLE);
-                    verify.setVisibility(View.VISIBLE);
-                    addAssets.setVisibility(View.VISIBLE);
+                    if (mode.equalsIgnoreCase(MODE_EMPLOYEE)){
+                        isEmployee = true;
+                        ok.setText("OK");
+                        name.setText(person);
+                        nik.setText(whoIsItMMResponse.getData().get(0).getPipNik());
+                        llAbsen.setVisibility(View.VISIBLE);
+                        verify.setVisibility(View.VISIBLE);
+                        addAssets.setVisibility(View.VISIBLE);
+                    } else {
+                        Messages.showAlertMessage(activity, "Result","Employee detected, please switch mode" );
+                        bottomsheetResultCallback.dismissDialog();
+                        dismissAllowingStateLoss();
+                    }
                 }
             }
         } catch (Exception ignored){}
@@ -457,12 +478,21 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
             }
             bottomsheetResultCallback.dismissDialog();
             dismissAllowingStateLoss();
-        } catch (Exception e){}
+        } catch (Exception ignored){}
     }
 
     @Override
     public void fetchFailed() {
-        progressDialog.dismiss();
+        try {
+            progressDialog.dismiss();
+        } catch (Exception ignored){}
+    }
+
+    @Override
+    public void fetchComplete() {
+        try {
+            progressDialog.dismiss();
+        } catch (Exception ignored){}
     }
 
     BottomSheetDialog d;

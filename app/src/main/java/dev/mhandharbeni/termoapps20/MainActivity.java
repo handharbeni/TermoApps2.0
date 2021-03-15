@@ -28,6 +28,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatImageButton;
 
+import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.felhr.utils.HexData;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.mlkit.vision.common.InputImage;
@@ -114,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @BindView(R.id.textSuhu)
     TextView textSuhu;
 
+    @BindView(R.id.segmentMode)
+    SegmentedButtonGroup segmentMode;
+
     boolean isPlay = false;
     FaceDetector detector;
 
@@ -123,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     boolean hasReturn = false;
     String currentSuhu = "0";
     File files;
+
+    String mode = BottomsheetResult.MODE_GUEST;
 
 
     @Override
@@ -224,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
                                             MainActivity.this,
                                             file,
                                             currentSuhu,
+                                            mode,
                                             MainActivity.this
                                     );
                             bottomsheetResult.setCancelable(false);
@@ -299,6 +306,10 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
         try {
             startCamera();
             openFrameProcessor();
+            segmentMode.setOnPositionChangedListener(position -> {
+                if (position == 0) mode = BottomsheetResult.MODE_GUEST;
+                if (position == 1) mode = BottomsheetResult.MODE_EMPLOYEE;
+            });
         } catch (Exception ignored){}
     }
 

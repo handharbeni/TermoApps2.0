@@ -29,7 +29,7 @@ public class WebClient {
     private Retrofit retrofit = null;
     public static WebClient webClient;
     public String BASE_URL = AppConstant.HOST_API;
-    public static int TIME_OUT = 30;
+    public static int TIME_OUT = 5;
 
     public WebClient() {
     }
@@ -81,15 +81,12 @@ public class WebClient {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder client = new OkHttpClient().newBuilder()
-                .addInterceptor(new Interceptor(){
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request originalRequest = chain.request();
-                        Request.Builder builder = originalRequest.newBuilder()
-                                .header("Authorization", Credentials.basic("trial", "trial"));
-                        Request newRequest = builder.build();
-                        return chain.proceed(newRequest);
-                    }
+                .addInterceptor(chain -> {
+                    Request originalRequest = chain.request();
+                    Request.Builder builder = originalRequest.newBuilder()
+                            .header("Authorization", Credentials.basic("trial", "trial"));
+                    Request newRequest = builder.build();
+                    return chain.proceed(newRequest);
                 })
                 .addInterceptor(logging)
                 .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
@@ -103,15 +100,12 @@ public class WebClient {
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder client = new OkHttpClient().newBuilder()
-                .addInterceptor(new Interceptor(){
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request originalRequest = chain.request();
-                        Request.Builder builder = originalRequest.newBuilder()
-                                .header("Authorization", Credentials.basic("trial", "trial"));
-                        Request newRequest = builder.build();
-                        return chain.proceed(newRequest);
-                    }
+                .addInterceptor(chain -> {
+                    Request originalRequest = chain.request();
+                    Request.Builder builder = originalRequest.newBuilder()
+                            .header("Authorization", Credentials.basic("trial", "trial"));
+                    Request newRequest = builder.build();
+                    return chain.proceed(newRequest);
                 })
                 .addInterceptor(logging)
                 .connectTimeout(timeOut, TimeUnit.SECONDS)

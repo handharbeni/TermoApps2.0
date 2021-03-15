@@ -138,7 +138,53 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </androidx.cardview.widget.CardView>
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+        app:layout_constraintBottom_toTopOf="@id/btmNav"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:id="@+id/segmentMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="4dp"
+        android:elevation="2dp"
+        android:background="@color/white"
+        app:divider="@color/white"
+        app:dividerPadding="10dp"
+        app:dividerWidth="1dp"
+        app:position="0"
+        app:radius="30dp"
+        app:ripple="true"
+        app:rippleColor="@color/black"
+        app:selectedBackground="@color/warm_grey">
+
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:id="@+id/segmentGuest"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+            app:drawableGravity="top"
+            app:text="GUEST"
+            app:textStyle="bold"
+            app:textSize="16sp"
+            app:selectedTextColor="@color/white"
+            app:textColor="@color/black" />
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:id="@+id/segmentEmployee"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="10dp"
+            app:drawableGravity="top"
+            app:text="EMPLOYEE"
+            app:textStyle="bold"
+            app:textSize="16sp"
+            app:selectedTextColor="@color/white"
+            app:textColor="@color/black" />
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btmNav"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:paddingBottom="10dp"
