@@ -21,31 +21,35 @@ android {
         applicationId "dev.mhandharbeni.termoapps20"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.config
-//        renderscriptTargetApi 22
-//        renderscriptSupportModeEnabled true
-//        renderscriptTargetApi 19
-//        renderscriptSupportMode true
-//        ndk {
-//            abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a' , 'arm64-v8a'
-//        }
     }
-//    splits {
-//        abi {
-//            enable true
-//            reset()
-//            include 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'mips', 'mips64', 'arm64-v8a'
-//            universalApk true
-//        }
-//    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "LiFiRON-${variant.name}-${variant.versionName}.apk"
+        }
+    }
+
     buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
+            }
+        }
         release {
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
         }
     }
     compileOptions {
