@@ -66,6 +66,7 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dev.mhandharbeni.termoapps20.report_guest.ReportGuestActivity;
 import dev.mhandharbeni.termoapps20.report_pegawai.ReportActivity;
 import dev.mhandharbeni.termoapps20.services.UsbService;
 import dev.mhandharbeni.termoapps20.utils.Messages;
@@ -298,6 +299,13 @@ public class MainActivity extends AppCompatActivity implements MultiplePermissio
     @OnClick(R.id.showLog)
     public void showLog(){
         Intent intent = new Intent(MainActivity.this, ReportActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.showLogGuest)
+    public void showLogGuest(){
+//        showLogGuest
+        Intent intent = new Intent(MainActivity.this, ReportGuestActivity.class);
         startActivity(intent);
     }
 

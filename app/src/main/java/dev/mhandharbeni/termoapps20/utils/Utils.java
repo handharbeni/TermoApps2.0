@@ -1,9 +1,12 @@
 package dev.mhandharbeni.termoapps20.utils;
 
 import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.BackgroundColorSpan;
+import android.util.Base64;
 
 import androidx.annotation.ColorInt;
 
@@ -298,5 +301,10 @@ public class Utils {
         BigDecimal bd = new BigDecimal(Float.toString(d));
         bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
         return bd;
+    }
+
+    public static Bitmap base64ToBitmap(String sBase64){
+        byte[] decodedString = Base64.decode(sBase64, Base64.DEFAULT);
+        return BitmapFactory.decodeByteArray(decodedString, 0,decodedString.length);
     }
 }

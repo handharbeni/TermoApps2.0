@@ -50,6 +50,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Theme.TermoApps20.subClass"
             android:fitsSystemWindows="true"/>
+        <activity android:name=".report_guest.ReportGuestActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.TermoApps20.subClass"
+            android:fitsSystemWindows="true"/>
         <service android:name=".services.UsbService" android:enabled="true"/>
     </application>
 
