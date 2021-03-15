@@ -55,7 +55,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().whoIsIt(new Subscriber<WhoIsItResponse>() {
             @Override
             public void onCompleted() {
-
+//                getMvpView().fetchComplete();
             }
 
             @Override
@@ -79,7 +79,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().realTimeTraining(new Subscriber<RealTimeTrainingResponse>() {
             @Override
             public void onCompleted() {
-
+//                getMvpView().fetchComplete();
             }
 
             @Override
@@ -103,7 +103,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().uploadReg(new Subscriber<UploadReg>() {
             @Override
             public void onCompleted() {
-
+//                getMvpView().fetchComplete();
             }
 
             @Override
@@ -127,7 +127,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().verify(new Subscriber<VerifyResponse>() {
             @Override
             public void onCompleted() {
-
+//                getMvpView().fetchComplete();
             }
 
             @Override
@@ -151,7 +151,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().addFrUser(new Subscriber<AddFRUserResponse>() {
             @Override
             public void onCompleted() {
-
+//                getMvpView().fetchComplete();
             }
 
             @Override
@@ -175,7 +175,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().delFrUser(new Subscriber<DeleteFrUser>() {
             @Override
             public void onCompleted() {
-
+//                getMvpView().fetchComplete();
             }
 
             @Override
@@ -199,7 +199,7 @@ public class ResultPresenter extends BasePresenter<ResultCallback.ResultResponse
         mSubscription = TermoSDK.getInstance().whoIsItMM(new Subscriber<WhoIsItMMResponse>() {
             @Override
             public void onCompleted() {
-                getMvpView().fetchFailed();
+//                getMvpView().fetchComplete();
             }
 
             @Override

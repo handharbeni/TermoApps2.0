@@ -484,14 +484,36 @@ public class BottomsheetResult extends BottomSheetDialogFragment implements
     @Override
     public void fetchFailed() {
         try {
-            progressDialog.dismiss();
+            if (countDownTimer != null){
+                countDownTimer.cancel();
+                countDownTimer = null;
+            }
+
+            bottomsheetResultCallback.dismissDialog();
+            dismissAllowingStateLoss();
+
+            if (progressDialog != null){
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
         } catch (Exception ignored){}
     }
 
     @Override
     public void fetchComplete() {
         try {
-            progressDialog.dismiss();
+            if (countDownTimer != null){
+                countDownTimer.cancel();
+                countDownTimer = null;
+            }
+
+            bottomsheetResultCallback.dismissDialog();
+            dismissAllowingStateLoss();
+
+            if (progressDialog != null){
+                progressDialog.dismiss();
+                progressDialog = null;
+            }
         } catch (Exception ignored){}
     }
 
